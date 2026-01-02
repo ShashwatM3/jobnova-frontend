@@ -1,65 +1,116 @@
-import Image from "next/image";
+"use client"
+
+import { useState } from "react"
+import { RefreshCw, Search, ExternalLink, Heart, Sparkles, Inspect, BookSearchIcon } from "lucide-react"
+import Image, { StaticImageData } from "next/image"
+import { Button } from "@/components/ui/button"
+import sparkles1 from '@/public/images/sparkles1.png'
+import sparkles2 from '@/public/images/sparkles2.png'
+import mockInterview from '@/public/images/mockInterview.png'
+import JobCard from "@/components/ui/Job/JobCard"
+import { useHeaderTabs } from "@/components/HeaderTabsProvider"
+import { useEffect } from "react"
+import jobs from "@/lib/data/jobs"
 
 export default function Home() {
+  const { activeTab, setActiveTab, setMatchedJobsCount, setLikedJobsCount, setAppliedJobsCount } = useHeaderTabs()
+  const [likedJobs, setLikedJobs] = useState<number[]>(jobs.filter(j => j.liked).map(j => j.id))
+  const [appliedJobs] = useState<number[]>([1])
+  const [matchedJobs] = useState<number[]>(jobs.map(j => j.id))
+
+  // Sync counts with header tabs
+  useEffect(() => {
+    setMatchedJobsCount(matchedJobs.length)
+    setLikedJobsCount(likedJobs.length)
+    setAppliedJobsCount(appliedJobs.length)
+  }, [matchedJobs.length, likedJobs.length, appliedJobs.length, setMatchedJobsCount, setLikedJobsCount, setAppliedJobsCount])
+
+  const toggleLike = (jobId: number) => {
+    setLikedJobs(prev => 
+      prev.includes(jobId) 
+        ? prev.filter(id => id !== jobId)
+        : [...prev, jobId]
+    )
+  }
+
+  const getMatchColor = (match: number) => {
+    if (match >= 80) return "bg-green-500"
+    if (match >= 60) return "bg-yellow-500"
+    return "bg-orange-500"
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Job Listings Section */}
+        <div className="flex-1 overflow-y-auto px-4 py-6">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 mb-6">
+            <Button className="flex items-center justify-center gap-3 bg-[#A68BFA] text-white flex-1 rounded-full hover:text-white hover:bg-violet-500 cursor-pointer">
+              <RefreshCw className="h-4 w-4" />
+              Change Job Reference
+            </Button>
+            <Button className="rounded-full bg-white text-black hover:text-white flex items-center justify-center gap-2">
+              <BookSearchIcon className="h-4 w-4" />
+              Top matched
+            </Button>
+          </div>
+
+          {/* Job Cards */}
+          <div className="space-y-4 flex items-start gap-3 flex-col h-[80vh] overflow-scroll w-full">
+            {jobs.map((job) => {
+              const isLiked = likedJobs.includes(job.id)
+              return (
+                <JobCard 
+                  key={job.id}
+                  job={job} 
+                  isLiked={isLiked}
+                  onToggleLike={toggleLike}
+                />
+              )
+            })}
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Right Sidebar - AI Mock Interview Promotion */}
+        <div className="w-80 h-fit p-4">
+          <div className="border radial-gradient bg-white rounded-lg border-gray-200 p-6 overflow-y-auto">
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-2">
+                <Image src={sparkles1} alt="" className="h-10 w-auto text-[#7c3aed]" /><br/>
+                Ace Your Interviews with AI-Powered Mock Sessions!
+              </h2>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                Struggling with interview nerves or unsure how to prepare? Let our cutting-edge AI mock interviews help you shine!
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                Why Choose Our AI Mock Interviews?
+                <Image src={sparkles2} alt="" className="h-7 w-auto text-[#7c3aed]" />
+              </h3>
+              <ul className="space-y-4">
+                <li className="text-sm text-gray-700">
+                  <span className="font-semibold">Job-Specific Simulations:</span> Practice with questions tailored to your target role, ensuring relevance and preparation.
+                </li>
+                <li className="text-sm text-gray-700">
+                  <span className="font-semibold">Actionable Feedback:</span> Get detailed analysis of your responses and practical, step-by-step improvement suggestions.
+                </li>
+                <li className="text-sm text-gray-700">
+                  <span className="font-semibold">Boost Success Rates:</span> Perfect your interview skills and increase your chances of landing the job you want.
+                </li>
+              </ul>
+            </div>
+
+            <Button className="w-full py-5 rounded-full">
+              <Image alt="" src={mockInterview} className="h-5 w-5" />
+              Mock Interview
+            </Button>
+          </div>
         </div>
-      </main>
-    </div>
-  );
+      </div>
+    </>
+  )
 }
