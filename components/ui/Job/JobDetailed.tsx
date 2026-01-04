@@ -240,86 +240,7 @@ function JobDetailed({
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
   const [finalExtracted, setFinalExtracted] = useState<{ extractedText: string } | null>(null);
-  const [finalAnalysis, setFinalAnalysis] = useState<JobFitAnalysis | null>({
-    overallMatch: 82,
-  
-    scores: {
-      education: 93,
-      workExperience: 80,
-      skills: 93,
-      experienceLevel: 44
-    },
-  
-    sections: {
-      relevantExperience: {
-        status: "pass",
-        summary:
-          "You have substantial experience as a Full-Stack Software Engineer, working extensively with modern web technologies aligned with this role.",
-        evidence: [
-          "6+ years of full-stack development experience",
-          "Built and maintained production web applications",
-          "Experience collaborating with cross-functional teams"
-        ]
-      },
-  
-      seniority: {
-        status: "pass",
-        summary:
-          "Your years of professional experience meet the mid-level seniority expectations for this position.",
-        evidence: [
-          "Over 5 years of professional software engineering experience"
-        ]
-      },
-  
-      education: {
-        status: "warning",
-        summary:
-          "While you hold a Master’s degree in a technical field, it does not strictly align with the specified Computer Science or Computer Engineering requirement.",
-        evidence: [
-          "Master’s degree in Digital and Interaction Design",
-          "No explicit Computer Science or Engineering degree listed"
-        ]
-      },
-  
-      skillsAlignment: {
-        status: "warning",
-        matchedSkills: [
-          "React",
-          "Node.js",
-          "RESTful APIs",
-          "PostgreSQL",
-          "Full-stack web development"
-        ],
-        missingRequiredSkills: [
-          "Formal Computer Science degree"
-        ],
-        preferredSkillsMatched: [
-          "Data visualization libraries",
-          "Python"
-        ],
-        summary:
-          "Your skill set strongly aligns with the technical requirements of the role, with minor gaps in formal academic alignment."
-      }
-    },
-  
-    strengths: [
-      "Strong full-stack development background",
-      "Proficiency in modern JavaScript frameworks",
-      "Experience building scalable web applications",
-      "Ability to collaborate with cross-functional teams"
-    ],
-  
-    gaps: [
-      "Degree is not explicitly in Computer Science or Computer Engineering",
-      "Limited evidence of AWS usage"
-    ],
-  
-    recommendation: {
-      verdict: "Good Fit",
-      rationale:
-        "The candidate demonstrates strong technical skills and relevant experience for the role. While there is a minor mismatch in formal education alignment, overall qualifications indicate a solid fit for a mid-level full-stack engineering position."
-    }
-  });
+  const [finalAnalysis, setFinalAnalysis] = useState<JobFitAnalysis | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   // ---------------- INTERVIEW ---------------------------
@@ -751,7 +672,7 @@ function JobDetailed({
                   </Button>
                 </div>
               ): !finalExtracted && !finalAnalysis ?(
-                <div>
+                <div className="max-w-[10vh]]">
                   <h1 className='text-md font-semibold'>Is this job a good fit for me?</h1>
                   <FileUploader 
                     handleChange={handleChange} 
